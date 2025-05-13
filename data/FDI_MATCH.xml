@@ -1,1 +1,53 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
+<fdi_mapping>
+    <!-- Tooth positions -->
+    <!-- Upper Right Quadrant (1) -->
+    <tooth fdi="11" angle="0" description="Upper right central incisor" />
+    <tooth fdi="12" angle="10" description="Upper right lateral incisor" />
+    <tooth fdi="13" angle="20" description="Upper right canine" />
+    <tooth fdi="14" angle="30" description="Upper right first premolar" />
+    <tooth fdi="15" angle="40" description="Upper right second premolar" />
+    <tooth fdi="16" angle="50" description="Upper right first molar" />
+    <tooth fdi="17" angle="60" description="Upper right second molar" />
+    <tooth fdi="18" angle="70" description="Upper right third molar" />
+    
+    <!-- Upper Left Quadrant (2) -->
+    <tooth fdi="21" angle="180" description="Upper left central incisor" />
+    <tooth fdi="22" angle="170" description="Upper left lateral incisor" />
+    <tooth fdi="23" angle="160" description="Upper left canine" />
+    <tooth fdi="24" angle="150" description="Upper left first premolar" />
+    <tooth fdi="25" angle="140" description="Upper left second premolar" />
+    <tooth fdi="26" angle="130" description="Upper left first molar" />
+    <tooth fdi="27" angle="120" description="Upper left second molar" />
+    <tooth fdi="28" angle="110" description="Upper left third molar" />
+    
+    <!-- Lower Left Quadrant (3) -->
+    <tooth fdi="31" angle="180" description="Lower left central incisor" />
+    <tooth fdi="32" angle="190" description="Lower left lateral incisor" />
+    <tooth fdi="33" angle="200" description="Lower left canine" />
+    <tooth fdi="34" angle="210" description="Lower left first premolar" />
+    <tooth fdi="35" angle="220" description="Lower left second premolar" />
+    <tooth fdi="36" angle="230" description="Lower left first molar" />
+    <tooth fdi="37" angle="240" description="Lower left second molar" />
+    <tooth fdi="38" angle="250" description="Lower left third molar" />
+    
+    <!-- Lower Right Quadrant (4) -->
+    <tooth fdi="41" angle="0" description="Lower right central incisor" />
+    <tooth fdi="42" angle="350" description="Lower right lateral incisor" />
+    <tooth fdi="43" angle="340" description="Lower right canine" />
+    <tooth fdi="44" angle="330" description="Lower right first premolar" />
+    <tooth fdi="45" angle="320" description="Lower right second premolar" />
+    <tooth fdi="46" angle="310" description="Lower right first molar" />
+    <tooth fdi="47" angle="300" description="Lower right second molar" />
+    <tooth fdi="48" angle="290" description="Lower right third molar" />
+    
+    <!-- Direction angle adjustments -->
+    <direction name="mesial" angle="15" description="Toward the midline" />
+    <direction name="distal" angle="-15" description="Away from the midline" />
+    <direction name="buccal" angle="90" description="Toward the cheek" />
+    <direction name="lingual" angle="-90" description="Toward the tongue" />
+    <direction name="labial" angle="90" description="Toward the lips" />
+    <direction name="palatal" angle="-90" description="Toward the palate" />
+    <direction name="apical" angle="0" description="Toward the root apex" />
+    <direction name="coronal" angle="180" description="Toward the crown" />
+</fdi_mapping> 
