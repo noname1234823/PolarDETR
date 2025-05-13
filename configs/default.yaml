@@ -5,7 +5,7 @@ data:
   train_path: "data/train"
   val_path: "data/val"
   test_path: "data/test"
-  batch_size: 16
+  batch_size: 4
   num_workers: 4
   image_size: [512, 512]
   pixel_size: 0.1  # mm per pixel
@@ -73,10 +73,10 @@ loss:
 
 # Training settings
 training:
-  lr: 1.0e-4
+  lr: 2.0e-4
   weight_decay: 1.0e-4
   lr_drop: 20
-  epochs: 50
+  epochs: 200
   clip_max_norm: 0.1
   
 # Evaluation settings
