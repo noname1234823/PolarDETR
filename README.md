@@ -91,7 +91,7 @@ If you use this code in your research, please cite:
 @article{PolarDETR2025,
   title={PolarDETR: Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT},
   author={Author, A. and Author, B.},
-  ///journal={Journal of Medical Imaging},
+  ///journal={},
   ///year={2025}
 }
 ```
