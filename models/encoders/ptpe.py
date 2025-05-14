@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
-import numpy as np
-import re
-from transformers import AutoTokenizer, AutoModel
 import math
 import os
+from transformers import AutoTokenizer, AutoModel
 from utils.fdi_parser import FDIParser
 
 class PolarTextPositionEncoder(nn.Module):
@@ -19,14 +17,46 @@ class PolarTextPositionEncoder(nn.Module):
         super().__init__()
         self.config = config
         
-        # Load BioClinicalBERT for entity extraction
-        self.tokenizer = AutoTokenizer.from_pretrained(config["model"]["text_encoder"]["pretrained"])
-        self.text_encoder = AutoModel.from_pretrained(config["model"]["text_encoder"]["pretrained"])
+        # Load BioClinicalBERT
+        model_path = config["model"]["text_encoder"].get("finetuned_path", 
+                                                        config["model"]["text_encoder"]["pretrained"])
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.text_encoder = AutoModel.from_pretrained(model_path)
         
         if config["model"]["text_encoder"]["freeze"]:
             for param in self.text_encoder.parameters():
                 param.requires_grad = False
         
+        # Load task heads if using fine-tuned model
+        if config["model"]["text_encoder"].get("finetuned_path"):
+            task_heads_path = os.path.join(model_path, 'task_heads.pt')
+            if os.path.exists(task_heads_path):
+                self.task_heads = torch.load(task_heads_path)
+                hidden_size = self.text_encoder.config.hidden_size
+                
+                # Entity extraction heads
+                self.tooth_number_head = nn.Linear(hidden_size, 1)
+                self.distance_head = nn.Linear(hidden_size, 1)
+                self.direction_classifier = nn.Linear(hidden_size, 8)
+                self.quadrant_classifier = nn.Linear(hidden_size, 4)
+                
+                # Load state dicts
+                self.tooth_number_head.load_state_dict(self.task_heads['tooth_number_head'])
+                self.distance_head.load_state_dict(self.task_heads['distance_head'])
+                self.direction_classifier.load_state_dict(self.task_heads['direction_classifier'])
+                self.quadrant_classifier.load_state_dict(self.task_heads['quadrant_classifier'])
+                
+                # Direction mapping
+                self.direction_map = {
+                    0: "mesial", 1: "distal", 2: "buccal", 3: "lingual",
+                    4: "labial", 5: "palatal", 6: "apical", 7: "coronal"
+                }
+            else:
+                print(f"Warning: task_heads.pt not found at {task_heads_path}")
+                self._setup_default_heads()
+        else:
+            self._setup_default_heads()
+            
         # Projection layer for position encoding
         self.position_projection = nn.Linear(3, config["model"]["ptpe"]["projection_dim"])
         
@@ -51,10 +81,23 @@ class PolarTextPositionEncoder(nn.Module):
         
         # Pixel size in mm
         self.pixel_size = config["data"]["pixel_size"]
+    
+    def _setup_default_heads(self):
+        """Setup default entity extraction heads if fine-tuned model not available"""
+        hidden_size = self.text_encoder.config.hidden_size
+        self.tooth_number_head = nn.Linear(hidden_size, 1)
+        self.distance_head = nn.Linear(hidden_size, 1)
+        self.direction_classifier = nn.Linear(hidden_size, 8)
+        self.quadrant_classifier = nn.Linear(hidden_size, 4)
+        
+        self.direction_map = {
+            0: "mesial", 1: "distal", 2: "buccal", 3: "lingual",
+            4: "labial", 5: "palatal", 6: "apical", 7: "coronal"
+        }
         
     def extract_entities(self, text):
         """
-        Extract anatomical entities from text description
+        Extract anatomical entities from text description using BioClinicalBERT
         
         Args:
             text (str): Description text in English
@@ -62,8 +105,43 @@ class PolarTextPositionEncoder(nn.Module):
         Returns:
             dict: Dictionary with extracted entities
         """
-        # Use the FDI parser to extract entities
-        return self.fdi_parser.extract_entities(text)
+        # Tokenize input text
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        inputs = {k: v.to(next(self.parameters()).device) for k, v in inputs.items()}
+        
+        # Get BERT embeddings
+        with torch.no_grad():
+            outputs = self.text_encoder(**inputs)
+            
+        # Use [CLS] token embedding for classification
+        cls_embedding = outputs.last_hidden_state[:, 0, :]
+        
+        # Predict entities
+        tooth_number = torch.round(torch.sigmoid(self.tooth_number_head(cls_embedding)) * 48).int().item()
+        if tooth_number < 11 or tooth_number > 48:
+            tooth_number = None
+            
+        distance = torch.relu(self.distance_head(cls_embedding)).item()
+        
+        direction_logits = self.direction_classifier(cls_embedding)
+        direction_idx = torch.argmax(direction_logits, dim=1).item()
+        direction = self.direction_map.get(direction_idx)
+        
+        quadrant_logits = self.quadrant_classifier(cls_embedding)
+        quadrant = torch.argmax(quadrant_logits, dim=1).item() + 1
+        
+        # If tooth number is valid, extract quadrant from it
+        if tooth_number is not None:
+            quadrant = str(tooth_number)[0]
+        
+        entities = {
+            "quadrant": str(quadrant),
+            "tooth_number": tooth_number,
+            "distance": distance if distance > 0 else 5.0,  # Default to 5mm if not detected
+            "direction": direction
+        }
+        
+        return entities
     
     def map_to_polar_coordinates(self, entities):
         """
@@ -128,10 +206,7 @@ class PolarTextPositionEncoder(nn.Module):
         Returns:
             torch.Tensor: Position-enhanced query embeddings
         """
-        batch_size = query_embeddings.shape[0]
-        num_queries = query_embeddings.shape[1]
         device = query_embeddings.device
-        
         enhanced_queries = query_embeddings.clone()
         
         for b, text in enumerate(text_queries):
