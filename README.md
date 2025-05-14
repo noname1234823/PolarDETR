@@ -29,10 +29,10 @@ PolarDETR/
 │   ├── metrics.py                  # Evaluation metrics
 │   └── visualization.py            # Visualization utilities
 ├── main.py                         # Main training script
-├── inference.py         # Inference script
-├── demo.py              # Demo script for PTPE visualization
-├── requirements.txt     # Dependencies
-└── README.md            # This file
+├── inference.py                    # Inference script
+├── demo.py                         # Demo script for PTPE visualization
+├── requirements.txt                # Dependencies
+└── README.md                       # This file
 ```
 
 ## Installation
