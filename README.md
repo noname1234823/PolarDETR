@@ -1,4 +1,4 @@
-# PolarDETR: Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT![Uploading image.png…]()
+# PolarDETR: Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT
 
 
 PolarDETR is a deep learning framework for precise detection and localization of anatomical entities in dental images based on text descriptions. The system uses a polar coordinate encoding approach combined with anatomical constraints for improved accuracy and interpretability.
