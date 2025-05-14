@@ -1,5 +1,4 @@
-# PolarDETR: Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT
-
+# PolarDETR:  Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT
 
 PolarDETR is a deep learning framework for precise detection and localization of anatomical entities in dental images based on text descriptions. The system uses a polar coordinate encoding approach combined with anatomical constraints for improved accuracy and interpretability.
 
@@ -35,7 +34,7 @@ PolarDETR/
 ## Installation
 
 ```bash
-git clone https://github.com/username/PolarDETR.git
+git clone https://github.com/xxxxxxxx/PolarDETR.git
 cd PolarDETR
 pip install -r requirements.txt
 ```
@@ -45,7 +44,7 @@ pip install -r requirements.txt
 ### Training
 
 ```bash
-python main.py --config configs/default.yaml
+python train.py --config configs/default.yaml
 ```
 
 ### Inference
@@ -54,7 +53,7 @@ python main.py --config configs/default.yaml
 python inference.py --model_path checkpoints/model.pth --image path/to/image.dcm --text "3mm cyst distal to tooth 37"
 ```
 
-### Demo
+### Demo (do not use BioClincalBERT)
 
 ```bash
 python demo.py --text "3mm cyst distal to tooth 37" --fdi_xml data/FDI_MATCH.xml
@@ -84,15 +83,56 @@ The PTPE module converts textual descriptions of anatomical locations into polar
 - **Position Matching Score (PMS)**: Measures alignment with text-derived positions
 - **Standard Detection Metrics**: mAP
 
+## BioClinicalBERT Fine-tuning for Dental Entity Extraction
+
+Fine-tuning BioClinicalBERT to extract dental entities from text descriptions for the PolarDETR system.
+
+### Entities Extracted
+
+1. **Tooth Number** (FDI notation): Two-digit number (quadrant 1-4, position 1-8)
+2. **Distance**: Distance in millimeters
+3. **Direction**: Relationship (mesial, distal, buccal, lingual, labial, palatal, apical, coronal)
+4. **Quadrant**: Dental quadrant (1-4)
+
+### Data Format
+
+```json
+{
+  "id": 1,
+  "text": "3mm cyst distal to tooth 36",
+  "tooth_number": 36,
+  "distance": 3.0,
+  "direction": 1,
+  "quadrant": 3
+}
+```
+
+- `direction`: 0=mesial, 1=distal, 2=buccal, 3=lingual, 4=labial, 5=palatal, 6=apical, 7=coronal
+- `quadrant`: 1=upper right, 2=upper left, 3=lower left, 4=lower right
+
+### Setup
+
+#### Prerequisites
+
+```bash
+pip install torch transformers pandas scikit-learn tqdm pyyaml
+```
+
+#### Training
+
+```bash
+python train_bioclinicalbert.py --config ./configs/config_finetune.yaml
+```
+
 ## Citation
 
 If you use this code in your research, please cite:
 
 ```
-@article{PolarDETR2025,
-  title={PolarDETR: Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT},
+@article{PolarDETR2023,
+  title={PolarDETR: Anatomical Entity Detection and Localization in Dental Images},
   author={Author, A. and Author, B.},
-  ///journal={},
-  ///year={2025}
+  journal={Journal of Medical Imaging},
+  year={2023}
 }
 ```
