@@ -82,7 +82,7 @@ The PTPE module converts textual descriptions of anatomical locations into polar
 
 - **Anatomical Consistency Score (ACS)**: Measures alignment with anatomical regions
 - **Position Matching Score (PMS)**: Measures alignment with text-derived positions
-- **Standard Detection Metrics**: mAP, Precision, Recall
+- **Standard Detection Metrics**: mAP
 
 ## Citation
 
