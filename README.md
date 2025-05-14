@@ -1,30 +1,34 @@
 # PolarDETR:  Enhancing Interpretability in Multi-modal Methods for Jawbone Lesion Detection in CBCT
 
-PolarDETR is a deep learning framework for precise detection and localization of anatomical entities in dental images based on text descriptions. The system uses a polar coordinate encoding approach combined with anatomical constraints for improved accuracy and interpretability.
+PolarDETR is a deep learning framework for the precise detection and localization of anatomical entities in dental images based on text descriptions. The system uses a polar coordinate encoding approach combined with anatomical constraints for improved accuracy and interpretability.
 
 ## Core Features
 
 - **Polar Text-Position Encoding (PTPE)**: Maps textual descriptions to polar coordinates
 - **Anatomical Constraint Learning**: Incorporates domain knowledge about anatomical regions
 - **Position Matching Optimization**: Aligns predicted regions with text descriptions
-- **Interpretability Module**: Provides anatomical consistency and position matching scores
+- **Interpretability Module**: Provides anatomical consistency and position-matching scores
 - **FDI Tooth Notation Support**: Uses the international FDI tooth numbering system
 
 ## Project Structure
 
 ```
 PolarDETR/
-├── configs/             # Configuration files
-├── data/                # Data preprocessing and loading utilities
-│   └── FDI_MATCH.xml    # FDI tooth notation to angle mapping
-├── models/              # Model architecture components
-│   ├── decoders/        # DETR decoder with position enhancements
-│   └── encoders/        # Text and image encoders
-├── utils/               # Helper functions and evaluation metrics
-│   ├── fdi_parser.py    # FDI tooth notation parser
-│   ├── metrics.py       # Evaluation metrics
-│   └── visualization.py # Visualization utilities
-├── main.py              # Main training script
+├── configs/                        # Configuration files
+├── data/                           # Data preprocessing and loading utilities
+│   ├── dataset.py                  # Dataset for main model training
+│   └── FDI_MATCH.xml               # FDI tooth notation to angle mapping
+├── models/                         # Model architecture components
+│   ├── decoders/                   # DETR decoder with position enhancements
+│       ├── position_matching.py    # Position Matching Optimization
+        ├── anatomy_constraint.py   # Anatomical Constraint Learning
+│   └── encoders/                   # Text and image encoders
+        ├── ptpe.py                 # Polar Text-Position Encoding
+├── utils/                          # Helper functions and evaluation metrics
+│   ├── fdi_parser.py               # FDI tooth notation parser
+│   ├── metrics.py                  # Evaluation metrics
+│   └── visualization.py            # Visualization utilities
+├── main.py                         # Main training script
 ├── inference.py         # Inference script
 ├── demo.py              # Demo script for PTPE visualization
 ├── requirements.txt     # Dependencies
