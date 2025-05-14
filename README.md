@@ -133,10 +133,10 @@ python train_bioclinicalbert.py --config ./configs/config_finetune.yaml
 If you use this code in your research, please cite:
 
 ```
-@article{PolarDETR2023,
+@article{PolarDETR2025,
   title={PolarDETR: Anatomical Entity Detection and Localization in Dental Images},
   author={Author, A. and Author, B.},
-  journal={Journal of Medical Imaging},
-  year={2023}
+  journal={xxxxxxxxxx},
+  year={2025}
 }
 ```
